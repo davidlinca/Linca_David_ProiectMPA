@@ -20,10 +20,34 @@ namespace Linca_David_ProiectMPA.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var linca_David_ProiectMPAContext = _context.Movie.Include(m => m.Director).Include(m => m.Genre).Include(m => m.Studio);
-            return View(await linca_David_ProiectMPAContext.ToListAsync());
+            ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["YearSortParm"] = sortOrder == "Year" ? "year_desc" : "Year";
+
+            var movies = _context.Movie
+                .Include(m => m.Director)
+                .Include(m => m.Genre)
+                .Include(m => m.Studio)
+                .AsNoTracking();
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    movies = movies.OrderByDescending(m => m.Title);
+                    break;
+                case "Year":
+                    movies = movies.OrderBy(m => m.ReleaseYear);
+                    break;
+                case "year_desc":
+                    movies = movies.OrderByDescending(m => m.ReleaseYear);
+                    break;
+                default:
+                    movies = movies.OrderBy(m => m.Title);
+                    break;
+            }
+
+            return View(await movies.ToListAsync());
         }
 
         // GET: Movies/Details/5
@@ -50,15 +74,13 @@ namespace Linca_David_ProiectMPA.Controllers
         // GET: Movies/Create
         public IActionResult Create()
         {
-            ViewData["DirectorID"] = new SelectList(_context.Set<Director>(), "ID", "ID");
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "ID", "ID");
-            ViewData["StudioID"] = new SelectList(_context.Set<Studio>(), "ID", "ID");
+            ViewData["DirectorID"] = new SelectList(_context.Director, "ID", "FullName");
+            ViewData["GenreID"] = new SelectList(_context.Genre, "ID", "Name");
+            ViewData["StudioID"] = new SelectList(_context.Studio, "ID", "Name");
             return View();
         }
 
         // POST: Movies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Title,Type,ReleaseYear,Synopsis,GenreID,DirectorID,StudioID")] Movie movie)
@@ -69,9 +91,9 @@ namespace Linca_David_ProiectMPA.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DirectorID"] = new SelectList(_context.Set<Director>(), "ID", "ID", movie.DirectorID);
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "ID", "ID", movie.GenreID);
-            ViewData["StudioID"] = new SelectList(_context.Set<Studio>(), "ID", "ID", movie.StudioID);
+            ViewData["DirectorID"] = new SelectList(_context.Director, "ID", "FullName", movie.DirectorID);
+            ViewData["GenreID"] = new SelectList(_context.Genre, "ID", "Name", movie.GenreID);
+            ViewData["StudioID"] = new SelectList(_context.Studio, "ID", "Name", movie.StudioID);
             return View(movie);
         }
 
@@ -88,15 +110,13 @@ namespace Linca_David_ProiectMPA.Controllers
             {
                 return NotFound();
             }
-            ViewData["DirectorID"] = new SelectList(_context.Set<Director>(), "ID", "ID", movie.DirectorID);
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "ID", "ID", movie.GenreID);
-            ViewData["StudioID"] = new SelectList(_context.Set<Studio>(), "ID", "ID", movie.StudioID);
+            ViewData["DirectorID"] = new SelectList(_context.Director, "ID", "FullName", movie.DirectorID);
+            ViewData["GenreID"] = new SelectList(_context.Genre, "ID", "Name", movie.GenreID);
+            ViewData["StudioID"] = new SelectList(_context.Studio, "ID", "Name", movie.StudioID);
             return View(movie);
         }
 
         // POST: Movies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Type,ReleaseYear,Synopsis,GenreID,DirectorID,StudioID")] Movie movie)
@@ -126,9 +146,9 @@ namespace Linca_David_ProiectMPA.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DirectorID"] = new SelectList(_context.Set<Director>(), "ID", "ID", movie.DirectorID);
-            ViewData["GenreID"] = new SelectList(_context.Set<Genre>(), "ID", "ID", movie.GenreID);
-            ViewData["StudioID"] = new SelectList(_context.Set<Studio>(), "ID", "ID", movie.StudioID);
+            ViewData["DirectorID"] = new SelectList(_context.Director, "ID", "FullName", movie.DirectorID);
+            ViewData["GenreID"] = new SelectList(_context.Genre, "ID", "Name", movie.GenreID);
+            ViewData["StudioID"] = new SelectList(_context.Studio, "ID", "Name", movie.StudioID);
             return View(movie);
         }
 
