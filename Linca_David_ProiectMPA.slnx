@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="../TypePredictionWebApi/TypePredictionWebApi.csproj" />
   <Project Path="Linca_David_ProiectMPA.csproj" />
 </Solution>

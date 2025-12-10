@@ -16,4 +16,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.0" />
     <PackageReference Include="Plotly.NET" Version="3.0.1" />
   </ItemGroup>
+  <ItemGroup Label="TypePredictionModel">
+    <None Include="TypePredictionModel.mlnet">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

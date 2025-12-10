@@ -1,4 +1,5 @@
 using Linca_David_ProiectMPA.Data;
+using Linca_David_ProiectMPA.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,13 @@ builder.Services.AddDbContext<Linca_David_ProiectMPAContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services
+    .AddHttpClient<ITypePredictionService, TypePredictionService>()
+    .ConfigureHttpClient(client =>
+    {
+        client.BaseAddress = new Uri("https://localhost:51148");
+    });
 
 var app = builder.Build();
 
