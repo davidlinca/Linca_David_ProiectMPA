@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option csharp_namespace = "movieStats";
+
+import "google/protobuf/empty.proto";
+
+package movieStats;
+
+service MovieStatsService {
+  rpc GetMovieCount (google.protobuf.Empty) returns (MovieCountResponse);
+}
+
+message MovieCountResponse {
+  int32 count = 1;
+}
